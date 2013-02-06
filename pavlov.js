@@ -281,16 +281,25 @@
         isNotFunction: function (actual, message) {
             return adapter.assert(typeof actual !== "function", message);
         },
-        throwsException: function (actual, expectedErrorDescription, message) {
-            // can optionally accept expected error message
+        throwsException: function (actual, expectedError, message) {
+            // can optionally accept expected error message string or object
             try {
                 actual();
                 adapter.assert(false, message);
             } catch (e) {
-                // so, this bit of weirdness is basically a way to allow for the fact
-                // that the test may have specified a particular type of error to catch, or not.
-                // and if not, e would always === e.
-                adapter.assert(e === (expectedErrorDescription || e), message);
+                if (expectedError === undefined) {
+                    // e always === e so assertion always passes
+                    adapter.assert(e === e, message);
+                } else if (typeof e === 'string') {
+                    adapter.assert(e === expectedError, message);
+                } else if (typeof e === 'object') {
+                    if (typeof expectedError === 'object') {
+                        adapter.assert(e.name === expectedError.name && e.message === expectedError.message, message);
+                    } else if(typeof expectedError === 'string')  {
+                        adapter.assert(e.message === expectedError, message);
+                    }
+                }
+
             }
         }
     });

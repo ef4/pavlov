@@ -907,6 +907,54 @@ pavlov.specify("Pavlov", function() {
                 // verify correct arguments would have been passed to qunit
                 assert(passedArgs).contentsEqual([false,"message"]);
             });
+
+            it("should pass true to adapter's assert when function throws exception object with expected message", function(){
+                var passedArgs = mock(pavlov.adapter, 'assert', function(){
+                    // run spec assertion while underlying qunit assertion is mocked
+                    assert(function(){
+                        throw(new Error("expected message"));
+                    }).throwsException("expected message", "message");
+                });
+
+                // verify correct arguments would have been passed to qunit
+                assert(passedArgs).contentsEqual([true,"message"]);
+            });
+
+            it("should pass true to adapter's assert when function throws exception object with expected error object", function(){
+                var passedArgs = mock(pavlov.adapter, 'assert', function(){
+                    // run spec assertion while underlying qunit assertion is mocked
+                    assert(function(){
+                        throw(new Error("expected message"));
+                    }).throwsException(new Error("expected message"), "message");
+                });
+
+                // verify correct arguments would have been passed to qunit
+                assert(passedArgs).contentsEqual([true,"message"]);
+            });
+
+            it("should pass false to adapter's assert when function throws exception object with unexpected error object name", function(){
+                var passedArgs = mock(pavlov.adapter, 'assert', function(){
+                    // run spec assertion while underlying qunit assertion is mocked
+                    assert(function(){
+                        throw(new SyntaxError("expected message"));
+                    }).throwsException(new Error("expected message"), "message");
+                });
+
+                // verify correct arguments would have been passed to qunit
+                assert(passedArgs).contentsEqual([false,"message"]);
+            });
+
+            it("should pass false to adapter's assert when function throws exception object with unexpected error object message", function(){
+                var passedArgs = mock(pavlov.adapter, 'assert', function(){
+                    // run spec assertion while underlying qunit assertion is mocked
+                    assert(function(){
+                        throw(new Error("some other error message"));
+                    }).throwsException(new Error("expected message"), "message");
+                });
+
+                // verify correct arguments would have been passed to qunit
+                assert(passedArgs).contentsEqual([false,"message"]);
+            });
         });
 
         describe("custom assertions", function(){
