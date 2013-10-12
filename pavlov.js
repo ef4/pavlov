@@ -684,10 +684,10 @@
                 statements.push(function () {
                     module(example.names(), {
                         setup: function () {
-                            each(befores, function () { this(); });
+                            QUnit.config.queue = befores.concat(QUnit.config.queue);
                         },
                         teardown: function () {
-                            each(afters, function () { this(); });
+                            QUnit.config.queue = QUnit.config.queue.concat(afters);
                         }
                     });
                 });
