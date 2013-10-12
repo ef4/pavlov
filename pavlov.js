@@ -611,7 +611,7 @@
         globalApi: false,                 // when true, adds api to global scope
         extendAssertions: addAssertions   // function for adding custom assertions
     };
-}(window));
+}((function() {return this;}.call())));
 
 
 // =========================
@@ -631,6 +631,7 @@
                 }
             };
 
+	    if (typeof(window) != 'undefined') {
             // after suite loads, set the header on the report page
             addEvent(window,'load',function () {
                 // document.getElementsByTag('h1').innerHTML = name;
@@ -639,6 +640,7 @@
                     h1s[0].innerHTML = name;
                 }
             });
+	    }
         },
         /**
          * Implements assert against QUnit's `ok`
@@ -682,7 +684,7 @@
                 // create a module with setup and teardown
                 // that executes all current befores/afters
                 statements.push(function () {
-                    module(example.names(), {
+                    QUnit.module(example.names(), {
                         setup: function () {
                             each(befores, function () { this(); });
                         },
